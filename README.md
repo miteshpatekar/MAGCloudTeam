@@ -1,0 +1,4 @@
+MAGCloudTeam
+============
+
+Cloud Computing Assignment
