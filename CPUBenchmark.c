@@ -1,116 +1,89 @@
 #include<stdio.h>
+#include<stdlib.h>
 #include<sys/time.h>
 #include<pthread.h>
+#include<string.h>
 
-void *threadFunction1(void *arg)
+// thread function to calculate Flops
+void *threadFunctionFlop(void *arg)
 {
 	int i;
 	double a=5;
-	printf("\nThread 1 ");
-	for(i = 0; i < 2500000; i++)
+	//  convert string argument to long
+	long iterations=strtol((char*)arg,NULL,0);
+	printf("\nThread is  %lu",iterations);
+	for(i = 0; i < iterations; i++)
     	{
         	a=a+a;    
     	}
 	return NULL;
 }
 
-void *threadFunction2(void *arg)
-{
-	int i = 0;
-	double a=5;
-	printf("\nThread 2 ");
-	for(i = 0; i < 2500000; i++)
-    	{
-        	a=a+a;    
-    	}
-	return NULL;
-}
-
-void *threadFunction3(void *arg)
-{
-	int i = 0;
-	double a=5;
-	printf("\nThread 3 ");
-	for(i = 0; i < 2500000; i++)
-    	{
-        	a=a+a;    
-    	}
-	return NULL;
-}
-
-void *threadFunction4(void *arg)
-{
-	int i = 0;
-	double a=5;
-	printf("\nThread 4 ");
-	for(i = 0; i < 2500000; i++)
-    	{
-        	a=a+a;    
-    	}
-	return NULL;
-}
-
-void flops()
+// thread function to calculate Iops
+void *threadFunctionIops(void *arg)
 {
 	int i;
-    	double a=5;
+	int a=5;
+	//  convert string argument to long
+	long iterations=strtol((char*)arg,NULL,0);
+	printf("\nThread is  %lu",iterations);
+	for(i = 0; i < iterations; i++)
+    	{
+        	a=a+a;    
+    	}
+	return NULL;
+}
+
+void flops(int numberOfThreads)
+{
+	int i;
+    	long double a=5;
 	struct timeval start, end;
     	struct timezone tzp;
-    	pthread_t pth1, pth2,pth3,pth4;
-		
+    	pthread_t th[10];// array of threads
+
+    	long iterations=10000000/numberOfThreads;
+	char iterationStr[20];
+	snprintf(iterationStr, 20, "%lu",iterations);
+	
 	printf("\nProgram to find FLOPS");
-	gettimeofday(&start, &tzp);
-	
-	pthread_create(&pth1,NULL,threadFunction1,"");
-	pthread_create(&pth2,NULL,threadFunction2,"");
-	pthread_create(&pth3,NULL,threadFunction3,"");
-	pthread_create(&pth4,NULL,threadFunction4,"");
-	
-	pthread_join(pth1, NULL);
-	pthread_join(pth2, NULL);
-	pthread_join(pth3, NULL);
-	pthread_join(pth4, NULL);
-	
-   	/*for(i = 0; i < 10000000; i++)
-    	{
-        	a=a+a;    
-    	}*/
-    	
-    	gettimeofday(&end, &tzp);
-    	double timeMs= (end.tv_usec - start.tv_usec)/(double)1000;
+	gettimeofday(&start, &tzp);//  calculate start time
+	for(i=0;i<numberOfThreads;i++)
+	{
+		pthread_create(&th[i],NULL,threadFunctionFlop,iterationStr);
+		pthread_join(th[i], NULL);
+	}
+    	gettimeofday(&end, &tzp); // calculate end time
+    
+    	double timeMs= (end.tv_usec - start.tv_usec)/(double)1000;//  time in milliseconds
     	printf("\nTime: %f ms\n",timeMs);
     	double Flops=(10000000)/(double)(timeMs/1000);
-    	double gFlops=(double)Flops/1000000000;
+    	double gFlops=(double)Flops/1000000000;// Calculate Giga Flops Formula: Flops * 10raised to (-9).
     	
     	printf("GFLOPS : %f\n",gFlops);
 }
 
-void iops()
+void iops(int numberOfThreads)
 {
 	int i;
     	int a=5;
 	struct timeval start, end;
     	struct timezone tzp;
-    	pthread_t pth1, pth2,pth3,pth4;
+    	pthread_t th[10];// array of threads
+
+    	long iterations=10000000/numberOfThreads;
+	char iterationStr[20];
+	snprintf(iterationStr, 20, "%lu",iterations);
 	
 	printf("\nProgram to find IOPS");
-	gettimeofday(&start, &tzp);
-	
-	pthread_create(&pth1,NULL,threadFunction1,"");
-	pthread_create(&pth2,NULL,threadFunction2,"");
-	pthread_create(&pth3,NULL,threadFunction3,"");
-	pthread_create(&pth4,NULL,threadFunction4,"");
-	
-	pthread_join(pth1, NULL);
-	pthread_join(pth2, NULL);
-	pthread_join(pth3, NULL);
-	pthread_join(pth4, NULL);
-	
-   	/*for(i = 0; i < 10000000; i++)
-    	{
-        	a=a+a;    
-    	}*/
+	gettimeofday(&start, &tzp);//  calculate start time
+	for(i=0;i<numberOfThreads;i++)
+	{
+		pthread_create(&th[i],NULL,threadFunctionIops,iterationStr);
+		pthread_join(th[i], NULL);
+	}
     	gettimeofday(&end, &tzp);
+    	
     	double timeMs= (end.tv_usec - start.tv_usec)/(double)1000;
     	printf("\nTime: %f ms\n",timeMs);
     	double Iops=(10000000)/(double)(timeMs/1000);
@@ -121,7 +94,9 @@ void iops()
 
 int main(int argc, char *argv[])
 {
-    	flops();
-    	iops();
+	printf("Number of threads %s", argv[1]);
+	int numberOfThreads=atoi(argv[1]);
+    	flops(numberOfThreads);
+    	iops(numberOfThreads);
     	return 0;
 }
