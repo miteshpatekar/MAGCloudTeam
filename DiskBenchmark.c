@@ -12,185 +12,386 @@
 //................................
 // 1B block size
 //................................
-void *fileReadWriteByte()
+void *fileWriteByteSequential()
+{
+	FILE *fp;
+	char c[]="c";
+	int i;	
+	fp = fopen("file.txt", "w+");	
+	char bufferB[BYTE];
+   	fwrite(c, sizeof(bufferB), 1, fp);
+    	fclose(fp);
+}
+
+void *fileWriteByteRandom()
+{	
+	FILE *fp;
+	char c[]="c";
+	int i;	
+	fp = fopen("file.txt", "w+");	
+	char bufferB[BYTE];
+	fseek(fp,1,SEEK_SET);
+   	fwrite(c, sizeof(bufferB), 1, fp);
+    	fclose(fp);	
+}
+
+void *fileReadByteSequential()
 {
 	FILE *fp;
 	char c[]="c";
 	int i;
-	struct timeval start, end;
-    	struct timezone tzp;	
-
-	fp = fopen("file.txt", "w+");
-	
-	//..........................
-    	//File  Write operation
-    	//..........................
-    	printf("\n\nFile Write operation for 1 Byte Block size");
-    	char bufferB[BYTE];
-	gettimeofday(&start, &tzp);
-   	fwrite(c, sizeof(bufferB), 1, fp);
-   	printf("\nSizeof file to be written %lu bytes",sizeof(bufferB));
-	if(fp == NULL)
-    	{
-        	printf("\n fopen() Error!!!\n");
-    	}
-    	gettimeofday(&end, &tzp);
-    	//Calculate Latency in milliseconds
-    	double latency= (end.tv_usec - start.tv_usec)/(double)1000;
-    	printf("\nLatency : %f ms",latency);
-    	//Calculate throughput in MB/Sec
-    	double througput=(sizeof(bufferB)/((double)((end.tv_usec - start.tv_usec))))*1000000;
-    	printf("\nThroughtput:%f MB/s",througput);
-    	
-    	//............................
-    	//File Read operation
-    	//...........................
-    	printf("\n\nFile read operation for 1 Byte Block size");
-	gettimeofday(&start, &tzp);
-   	fread(bufferB, sizeof(bufferB), 1, fp);
-    	gettimeofday(&end, &tzp);
-    	printf("\nSizeof file to read %lu bytes",ftell(fp));
- 	printf("\nFile contents:%s", bufferB);
-
-    	//Calculate Latency in milliseconds
-    	latency= (end.tv_usec - start.tv_usec)/(double)1000;
-    	printf("\nLatency : %f ms",latency);
-    	//Calculate throughput in MB/Sec
-    	througput=(sizeof(bufferB)/((double)((end.tv_usec - start.tv_usec))))*1000000;
-    	printf("\nThroughtput:%f MB/s",througput);
-    	
+	char bufferB[BYTE];	
+	fp = fopen("file.txt", "r+");
+	fread(bufferB, sizeof(bufferB), 1, fp);
     	fclose(fp);
 }
+
+void *fileReadByteRandom()
+{
+	FILE *fp;
+	char c[]="c";
+	int i;
+	char bufferB[BYTE];	
+	fp = fopen("file.txt", "r+");
+	fseek(fp,1,SEEK_SET);
+	fread(bufferB, sizeof(bufferB), 1, fp);
+    	fclose(fp);
+}
+
 
 //................................
 // 1KB block size
 //................................
-void fileReadWriteKiloByte()
+void *fileWriteKiloByteSequential()
 {
 	FILE *fp;
 	char c[]="c";
 	int i;
-	struct timeval start, end;
-    	struct timezone tzp;	
-
 	fp = fopen("file.txt", "w+");
-	
-	//..........................
-    	//File  Write operation
-    	//..........................
-    	printf("\n\nFile write operation for 1 Kilo Byte Block size");
-    	char bufferKb[KILOBYTE];
+	char bufferKb[KILOBYTE];
     	for(i=0;i<KILOBYTE;i++)
     	{
     		fwrite(c, BYTE, 1, fp);
     	}
-   	printf("\nSizeof file to be written %lu bytes",sizeof(bufferKb));
-    	gettimeofday(&end, &tzp);
-    	
-    	//Calculate Latency in milliseconds
-    	double latency= (end.tv_usec - start.tv_usec)/(double)(KILOBYTE*1000);
-    	printf("\nLatency : %f ms",latency);
-    	
-    	//Calculate throughput in MB/Sec
-    	double througput=(sizeof(bufferKb)/((double)(1024*(end.tv_usec - start.tv_usec))))*1000000;
-    	printf("\nThroughtput:%f MB/s",througput);
-    	
-    	
-    	//............................
-    	//File Read operation
-    	//...........................
-    	printf("\n\nFile read operation for 1 Kilo Byte Block size");
-	gettimeofday(&start, &tzp);
-   	fread(bufferKb, sizeof(bufferKb), 1, fp);
-    	gettimeofday(&end, &tzp);
-    	printf("\nSizeof file to read %lu bytes",ftell(fp));
- 	//printf("\nFile contents:%s", bufferKb);
-
-    	//Calculate Latency in milliseconds
-    	latency= (end.tv_usec - start.tv_usec)/(double)(KILOBYTE*1000);
-    	printf("\nLatency : %f ms",latency);
-    	
-    	//Calculate throughput in MB/Sec
-    	througput=(sizeof(bufferKb)/((double)(1024*(end.tv_usec - start.tv_usec))))*1000000;
-    	printf("\nThroughtput:%f MB/s",througput);
-    	
     	
     	fclose(fp);
 }
 
-//................................
-// 1MB block size
-//................................
-void fileReadWriteMegaByte()
+void *fileWriteKiloByteRandom()
 {
 	FILE *fp;
 	char c[]="c";
 	int i;
-	struct timeval start, end;
-    	struct timezone tzp;	
-
 	fp = fopen("file.txt", "w+");
-	
-	//..........................
-    	//File  Write operation
-    	//..........................
-    	printf("\n\nFile write operation for 1 Mega Byte Block size");
-    	char bufferMb[MEGABYTE];
+	char bufferKb[KILOBYTE];
+    	for(i=0;i<KILOBYTE;i++)
+    	{
+    		int r=rand()%KILOBYTE;
+	    	fseek(fp,r,SEEK_SET); 
+    		fwrite(c, BYTE, 1, fp);
+    	}
+    	
+    	fclose(fp);
+}
+
+void *fileReadKiloByteSequential()
+{
+	FILE *fp;
+	char c[]="c";
+	int i;
+	fp = fopen("file.txt", "r+");
+	char bufferKb[KILOBYTE];
+    	for(i=0;i<KILOBYTE;i++)
+    	{
+    		fread(bufferKb, sizeof(bufferKb), 1, fp);
+    	}
+    	fclose(fp);
+}
+
+void *fileReadKiloByteRandom()
+{
+	FILE *fp;
+	char c[]="c";
+	int i;
+	fp = fopen("file.txt", "r+");
+	char bufferKb[KILOBYTE];
+    	for(i=0;i<KILOBYTE;i++)
+    	{
+    		int r=rand()%KILOBYTE;
+	    	fseek(fp,r,SEEK_SET); 
+    		fread(bufferKb, sizeof(bufferKb), 1, fp);
+    	}
+    	fclose(fp);
+}
+
+
+
+//................................
+// 1MB block size
+//................................
+void *fileWriteMegaByteSequential()
+{
+	FILE *fp;
+	char c[]="c";
+	int i;
+	fp = fopen("file.txt", "w+");
+	char bufferKb[MEGABYTE];
     	for(i=0;i<MEGABYTE;i++)
     	{
     		fwrite(c, BYTE, 1, fp);
     	}
-   	printf("\nSizeof file to be written %lu bytes",sizeof(bufferMb));
-    	gettimeofday(&end, &tzp);
     	
-    	//Calculate Latency in milliseconds
-    	double latency= (end.tv_usec - start.tv_usec)/(double)(MEGABYTE*1000);
-    	printf("\nLatency : %f ms",latency);
-    	
-    	//Calculate throughput in MB/Sec
-    	double througput=(sizeof(bufferMb)/((double)(1024*1024*(end.tv_usec - start.tv_usec))))*1000000;
-    	printf("\nThroughtput:%f MB/s",througput);
-    	
-    	
-    	//............................
-    	//File Read operation
-    	//...........................
-    	printf("\n\nFile read operation for 1 Mega Byte Block size");
-	gettimeofday(&start, &tzp);
-   	fread(bufferMb, sizeof(bufferMb), 1, fp);
-    	gettimeofday(&end, &tzp);
-    	//printf("\nSizeof file to read %lu bytes",ftell(fp));
- 	//printf("\nFile contents:%s", bufferMb);
+    	fclose(fp);
+}
 
-    	//Calculate Latency in milliseconds
-    	latency= (end.tv_usec - start.tv_usec)/(double)(MEGABYTE*1000);
-    	printf("\nLatency : %f ms",latency);
+void *fileWriteMegaByteRandom()
+{
+	FILE *fp;
+	char c[]="c";
+	int i;
+	fp = fopen("file.txt", "w+");
+	char bufferKb[MEGABYTE];
+    	for(i=0;i<MEGABYTE;i++)
+    	{
+    		int r=rand()%MEGABYTE;
+	    	fseek(fp,r,SEEK_SET); 
+    		fwrite(c, BYTE, 1, fp);
+    	}
     	
-    	//Calculate throughput in MB/Sec
-    	througput=(sizeof(bufferMb)/((double)(1024*1024*(end.tv_usec - start.tv_usec))))*1000000;
-    	printf("\nThroughtput:%f MB/s",througput);
-    	
-    	
+    	fclose(fp);
+}
+
+void *fileReadMegaByteSequential()
+{
+	FILE *fp;
+	char c[]="c";
+	int i;
+	fp = fopen("file.txt", "r+");
+	char bufferKb[MEGABYTE];
+    	for(i=0;i<MEGABYTE;i++)
+    	{
+    		fread(bufferKb, sizeof(bufferKb), 1, fp);
+    	}
+    	fclose(fp);
+}
+
+void *fileReadMegaByteRandom()
+{
+	FILE *fp;
+	char c[]="c";
+	int i;
+	fp = fopen("file.txt", "r+");
+	char bufferKb[MEGABYTE];
+    	for(i=0;i<MEGABYTE;i++)
+    	{
+    		int r=rand()%MEGABYTE;
+	    	fseek(fp,r,SEEK_SET); 
+    		fread(bufferKb, sizeof(bufferKb), 1, fp);
+    	}
     	fclose(fp);
 }
 
 
 void main()
 {	
-    	//pthread_t pth1, pth2,pth3,pth4;		
+	struct timeval start, end;
+    	struct timezone tzp;
+    	double latency,throughput;
+    			
 	printf("\nProgram to find Disk Benchmark\n.................\n..................");
 	pthread_t th[10];// array of threads
 	int i;
-	
-    	for(i=0;i<2;i++)
+	int ch,nthread;
+	while(1)
 	{
-		pthread_create(&th[i],NULL,fileReadWriteByte,NULL);
-		pthread_join(th[i], NULL);
-	}
-    	
-	fileReadWriteByte();
-	//fileReadWriteKiloByte();
-	//fileReadWriteMegaByte();
 	
-	printf("\n");
+	printf("\n\nEnter the Block Size:\n1.BYTE\n2.KILOBYTE\n3.MEGABYTE\n4.EXIT : \n");
+	scanf("%d",&ch);
+	if(ch==4)
+	{
+		exit(0);
+	}
+	printf("\n\nEnter the number of threads(1/2/4) :\n");
+	scanf("%d",&nthread);
+	
+	switch (ch)
+	{
+		case 1: //Sequential Write
+			printf("\nBYTE read for thread %d",nthread);
+			printf("\n\nSEQUENTIAL Write");
+			gettimeofday(&start, &tzp);
+			for(i=0;i<nthread;i++)
+			{
+				pthread_create(&th[i],NULL,fileWriteByteSequential,NULL);
+				pthread_join(th[i], NULL);
+			}
+			gettimeofday(&end, &tzp);
+    			latency= (end.tv_usec - start.tv_usec)/(double)(nthread*1000);
+    			printf("\nLatency : %f ms",latency);
+    			throughput=(BYTE/(double)((latency)*1000));
+    			printf("\nThroughtput:%f MB/s",throughput);
+    			
+    			//Random Write
+			printf("\n\nRANDOM Write");
+			gettimeofday(&start, &tzp);
+			for(i=0;i<nthread;i++)
+			{
+				pthread_create(&th[i],NULL,fileWriteByteRandom,NULL);
+				pthread_join(th[i], NULL);
+			}
+			gettimeofday(&end, &tzp);
+    			latency= (end.tv_usec - start.tv_usec)/(double)(nthread*1000);
+    			printf("\nLatency : %f ms",latency);
+    			throughput=BYTE/(double)(latency*1000);
+    			printf("\nThroughtput:%f MB/s",throughput);
+    			
+    			
+    			//Sequential Read
+			printf("\n\nSEQUENTIAL Read");
+    			gettimeofday(&start, &tzp);
+			for(i=0;i<nthread;i++)
+			{
+				pthread_create(&th[i],NULL,fileReadByteSequential,NULL);
+				pthread_join(th[i], NULL);
+			}
+			gettimeofday(&end, &tzp);
+    			latency= (end.tv_usec - start.tv_usec)/(double)(nthread*1000);
+    			printf("\nLatency : %f ms",latency);
+    			throughput=BYTE/(double)(latency*1000);
+    			printf("\nThroughtput:%f MB/s",throughput);
+    			
+    			//Random Read
+			printf("\n\nRANDOM Read");
+    			gettimeofday(&start, &tzp);
+			for(i=0;i<nthread;i++)
+			{
+				pthread_create(&th[i],NULL,fileReadByteRandom,NULL);
+				pthread_join(th[i], NULL);
+			}
+			gettimeofday(&end, &tzp);
+    			latency= (end.tv_usec - start.tv_usec)/(double)(nthread*1000);
+    			printf("\nLatency : %f ms",latency);
+    			throughput=BYTE/(double)(latency*1000);
+    			printf("\nThroughtput:%f MB/s",throughput);
+    			
+			break;
+		case 2: //Sequential Write KiloByte
+			printf("\n\nSEQUENTIAL Write KiloByte");
+    			gettimeofday(&start, &tzp);
+			for(i=0;i<nthread;i++)
+			{
+				pthread_create(&th[i],NULL,fileWriteKiloByteSequential,NULL);
+				pthread_join(th[i], NULL);
+			}
+			gettimeofday(&end, &tzp);
+    			latency= (end.tv_usec - start.tv_usec)/(double)(KILOBYTE*1000);
+    			printf("\nLatency : %f ms",latency);
+    			throughput=(KILOBYTE/((double)(1024*(end.tv_usec - start.tv_usec))))*1000000;
+    			printf("\nThroughtput:%f MB/s",throughput);
+			
+			//Random Write KiloByte
+			printf("\n\nRANDOM Write KiloByte");
+    			gettimeofday(&start, &tzp);
+			for(i=0;i<nthread;i++)
+			{
+				pthread_create(&th[i],NULL,fileWriteKiloByteRandom,NULL);
+				pthread_join(th[i], NULL);
+			}
+			gettimeofday(&end, &tzp);
+    			latency= (end.tv_usec - start.tv_usec)/(double)(KILOBYTE*1000);
+    			printf("\nLatency : %f ms",latency);
+    			throughput=(KILOBYTE/((double)(1024*(end.tv_usec - start.tv_usec))))*1000000;
+    			printf("\nThroughtput:%f MB/s",throughput);
+			
+			//Sequential Read KiloByte
+			printf("\n\nSEQUENTIAL Write KiloByte");
+    			gettimeofday(&start, &tzp);
+			for(i=0;i<nthread;i++)
+			{
+				pthread_create(&th[i],NULL,fileReadKiloByteSequential,NULL);
+				pthread_join(th[i], NULL);
+			}
+			gettimeofday(&end, &tzp);
+ 			latency= (end.tv_usec - start.tv_usec)/(double)(KILOBYTE*1000);
+    			printf("\nLatency : %f ms",latency);
+    			throughput=(KILOBYTE/((double)(1024*(end.tv_usec - start.tv_usec))))*1000000;
+    			printf("\nThroughtput:%f MB/s",throughput);
+    			
+    			//Random Read KiloByte
+			printf("\n\nRandom Read KiloByte");
+    			gettimeofday(&start, &tzp);
+			for(i=0;i<nthread;i++)
+			{
+				pthread_create(&th[i],NULL,fileReadKiloByteRandom,NULL);
+				pthread_join(th[i], NULL);
+			}
+			gettimeofday(&end, &tzp);
+ 			latency= (end.tv_usec - start.tv_usec)/(double)(KILOBYTE*1000);
+    			printf("\nLatency : %f ms",latency);
+    			throughput=(KILOBYTE/((double)(1024*(end.tv_usec - start.tv_usec))))*1000000;
+    			printf("\nThroughtput:%f MB/s",throughput);
+			break;
+		case 3: //Sequential Write MegaByte
+			printf("\n\nSEQUENTIAL Write MegaByte");
+    			gettimeofday(&start, &tzp);
+			for(i=0;i<nthread;i++)
+			{
+				pthread_create(&th[i],NULL,fileWriteMegaByteSequential,NULL);
+				pthread_join(th[i], NULL);
+			}
+			gettimeofday(&end, &tzp);
+    			latency= (end.tv_usec - start.tv_usec)/(double)(MEGABYTE*1000);
+    			printf("\nLatency : %f ms",latency);
+    			throughput=(MEGABYTE/((double)(1024*1024*(end.tv_usec - start.tv_usec))))*1000000;
+    			printf("\nThroughtput:%f MB/s",throughput);		
+    			
+    			//Random Write MegaByte
+			printf("\n\nRANDOM Write MegaByte");
+    			gettimeofday(&start, &tzp);
+			for(i=0;i<nthread;i++)
+			{
+				pthread_create(&th[i],NULL,fileWriteMegaByteRandom,NULL);
+				pthread_join(th[i], NULL);
+			}
+			gettimeofday(&end, &tzp);
+    			latency= (end.tv_usec - start.tv_usec)/(double)(MEGABYTE*1000);
+    			printf("\nLatency : %f ms",latency);
+    			throughput=(MEGABYTE/((double)(1024*1024*(end.tv_usec - start.tv_usec))))*1000000;
+    			printf("\nThroughtput:%f MB/s",throughput);		
+			
+			//Sequential Read MegaByte
+			printf("\n\nSequential Read MegaByte");
+    			gettimeofday(&start, &tzp);
+			for(i=0;i<nthread;i++)
+			{
+				pthread_create(&th[i],NULL,fileReadMegaByteSequential,NULL);
+				pthread_join(th[i], NULL);
+			}
+			gettimeofday(&end, &tzp);
+    			latency= (end.tv_usec - start.tv_usec)/(double)(MEGABYTE*1000);
+    			printf("\nLatency : %f ms",latency);
+    			throughput=(MEGABYTE/((double)(1024*1024*(end.tv_usec - start.tv_usec))))*1000000;
+    			printf("\nThroughtput:%f MB/s",throughput);	
+    			
+    			//Random Read MegaByte
+			printf("\n\nRandom Read MegaByte");
+    			gettimeofday(&start, &tzp);
+			for(i=0;i<nthread;i++)
+			{
+				pthread_create(&th[i],NULL,fileReadMegaByteRandom,NULL);
+				pthread_join(th[i], NULL);
+			}
+			gettimeofday(&end, &tzp);
+    			latency= (end.tv_usec - start.tv_usec)/(double)(MEGABYTE*1000);
+    			printf("\nLatency : %f ms",latency);
+    			throughput=(MEGABYTE/((double)(1024*1024*(end.tv_usec - start.tv_usec))))*1000000;
+    			printf("\nThroughtput:%f MB/s",throughput);		
+    				
+			break;
+		case 4: exit(0);
+			break;
+		default:printf("/nOOPSS...Please enter valid input");			
+	}
+	};	
+    	
 }
