@@ -1,52 +1,139 @@
 #include<stdio.h>
 #include<sys/time.h>
 #include<string.h>
+#include<stdlib.h>
 
 #define BLOCK_SIZE 1
 #define BLOCK_SIZE_KB 1024
 #define BLOCK_SIZE_MB 1024*1024
 
-int main(int argc, char *argv[])
+int main()
 {
 	
+	printf("Memory Benchmarking \n");
+	block_Byte();
+	printf("in main..\n");
+	block_Kbyte();
+	printf("in main 1..\n");
+	block_Mbyte();
+	printf("in main 2..\n");
+}
+
+int block_Byte()
+{
+	
+	printf("Block size 1 Byte \n");
+
 	int i;
 	int len;
 	double a=5;
 	struct timeval start, end;
 	struct timezone tzp;
 
-	char mem[] = "Memory Benchmarking using C";	
-
-	char mem_write[100]; 
-	len = strlen(mem)+1;
+	char mem = 'C';	
+	
+	char *mem_write=malloc(sizeof(BLOCK_SIZE));
+	//mem_write=(char*)
+	//len = strlen(mem)+1;
 	int no_bytes= sizeof(mem);
 
 	gettimeofday(&start, &tzp);
 
-	memcpy(mem_write,mem,len);
+	for(i=0;i<BLOCK_SIZE;i++)
+	{
+		memcpy(mem_write,&mem,BLOCK_SIZE);
+		*(mem_write+i);
+		//printf("memory %p",mem_write);
+		//printf("%d",i);
+	}
 
 	gettimeofday(&end, &tzp);
 
-	double timeMs= (end.tv_usec - start.tv_usec)/(double)1000;
+	double timeMs = (end.tv_usec - start.tv_usec)/(double)1000;
 
-// Throughput for block size = 1B 
+	double throughput = (BLOCK_SIZE/((double)((1024*1024)*(end.tv_usec-start.tv_usec))))*1000000;
 
-	double throughput = (BLOCK_SIZE/((double)(1048576*(end.tv_usec-start.tv_usec))))*1000000;
-
-// Throughput for block size = 1KB 
-
-	double throughput1 = (BLOCK_SIZE_KB/((double)(1048576*(end.tv_usec-start.tv_usec))))*1000000;
-
-// Throughput for block size = 1MB 
-
-	double throughput2 = (BLOCK_SIZE_MB/((double)(1048576*(end.tv_usec-start.tv_usec))))*1000000;
-
-	printf("Throughput for 1KB block: %f MB/sec\n\n",throughput);
-
-	printf("Throughput for 1KB block: %f MB/sec\n\n",throughput1);
-
-	printf("Throughput for 1MB block: %f MB/sec\n\n",throughput2);
+	printf("Throughput for 1B block: %f MB/sec\n\n",throughput);
 
 	printf("Latency is: %f milliseconds\n",timeMs);
 
 }
+
+int block_Kbyte()
+{
+
+	printf("Block size 1 KByte \n");
+		
+	int i;
+	int len;
+	double a=5;
+	struct timeval start, end;
+	struct timezone tzp;
+
+	char mem = 'C';	
+	
+	char *mem_write=malloc(sizeof(BLOCK_SIZE_KB));
+	//mem_write=(char*)
+	//len = strlen(mem)+1;
+	int no_bytes= sizeof(mem);
+
+	gettimeofday(&start, &tzp);
+
+	for(i=0;i<BLOCK_SIZE_KB;i++)
+	{
+		memcpy(mem_write,&mem,BLOCK_SIZE);
+		*(mem_write+i);
+		//printf("memory %p",mem_write);
+		//printf("%d",i);
+	}
+
+	gettimeofday(&end, &tzp);
+
+	double timeMs = (end.tv_usec - start.tv_usec)/(double)1000;
+
+	double throughput = (BLOCK_SIZE_KB/((double)((1024*1024)*(end.tv_usec-start.tv_usec))))*1000000;
+
+	printf("Throughput for 1KB block: %f MB/sec\n\n",throughput);
+
+	printf("Latency is: %f milliseconds\n",timeMs);
+}
+
+int block_Mbyte()
+{
+	printf("Block size 1 MByte \n");
+	int i;
+	int len;
+	double a=5;
+	struct timeval start, end;
+	struct timezone tzp;
+
+	char mem = 'C';	
+	
+	char *mem_write=malloc(sizeof(BLOCK_SIZE_MB));
+	//mem_write=(char*)
+	//len = strlen(mem)+1;
+	int no_bytes= sizeof(mem);
+
+	gettimeofday(&start, &tzp);
+
+	for(i=0;i<BLOCK_SIZE_MB;i++)
+	{
+		memcpy(mem_write,&mem,BLOCK_SIZE);
+		*(mem_write+i);
+		//printf("memory %p",mem_write);
+		//printf("%d",i);
+	}
+
+	gettimeofday(&end, &tzp);
+
+	double timeMs = (end.tv_usec - start.tv_usec)/(double)1000;
+
+	double throughput = (BLOCK_SIZE_MB/((double)((1024*1024)*(end.tv_usec-start.tv_usec))))*1000000;
+
+	printf("Throughput for 1MB block: %f MB/sec\n\n",throughput);
+
+	printf("Latency is: %f milliseconds\n",timeMs);
+
+//free();
+}
+
