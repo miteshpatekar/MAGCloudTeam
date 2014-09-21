@@ -32,7 +32,7 @@ int main()
 
 
 		scanf("%d",&ch);
-		if(ch==4)
+		if(ch>=4)
 		{
 			exit(0);
 		}
