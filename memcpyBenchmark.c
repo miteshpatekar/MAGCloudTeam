@@ -28,11 +28,10 @@ int main()
 	int ch,nthread;
 	while(1)
 	{
-		printf("\nEnter the Block Size:\n1.BYTE\n2.KILOBYTE\n3.MEGABYTE\n4.EXIT : \n");
-
+		printf("\nEnter the Block Size:\n1.Sequential Byte Operation\n2.Random Byte Operation \n3.Sequential KiloByte Operation\n4.Random KiloByte Operation\n5.Sequential MegaByte Operation\n6.Random MegaByte Operation\n7.Exit \nEnter your choice: ");
 
 		scanf("%d",&ch);
-		if(ch>=4)
+		if(ch>=7)
 		{
 			exit(0);
 		}
@@ -55,7 +54,9 @@ int main()
 			printf("LATENCY : %f ms\n",latency);
 			throughput=(BLOCK_SIZE/(double)((latency)*1000));
 			printf("THROUGHPUT : %f MB/sec\n",throughput);
+			break;
 
+			case 2:
 			// Random Memroy Read+Write
 			printf("..Random read+write..\n");
 			printf("-------------------------------------\n");
@@ -74,10 +75,10 @@ int main()
 
 			break;
 
-			case 2: //Sequential Memroy Read+Write
+			case 3: //Sequential Memroy Read+Write
 			printf("\nKiloByte read+write for %d thread ",nthread);
-			printf("-------------------------------------\n");
 			printf("\n\n..Sequential Read+Write..\n");
+			printf("-------------------------------------\n");
 			gettimeofday(&start, &tzp);
 			for(i=0;i<nthread;i++)
 			{
@@ -89,7 +90,9 @@ int main()
 			printf("LATENCY : %f ms\n",latency);
 			throughput=(BLOCK_SIZE_KB/(double)((latency)*1000));
 			printf("THROUGHPUT : %f MB/sec\n",throughput);
+			break;
 
+			case 4:
 			//Random Memroy Read+Write
 			printf("..Random read+write..\n");
 			printf("-------------------------------------\n");
@@ -107,10 +110,10 @@ int main()
 	
 			break;
 
-			case 3: //Sequential Memroy Read+Write
+			case 5: //Sequential Memroy Read+Write
 			printf("\nMegaByte read+write for %d thread \n",nthread);
-			printf("-------------------------------------\n");
 			printf("..Sequential Read+Write..\n");
+			printf("-------------------------------------\n");
 			gettimeofday(&start, &tzp);
 			for(i=0;i<nthread;i++)
 			{
@@ -122,7 +125,9 @@ int main()
 			printf("LATENCY : %f ms\n",latency);
 			throughput=(BLOCK_SIZE_MB/(double)((latency)*1000));
 			printf("THROUGHPUT : %f MB/sec\n",throughput);
+			break;
 
+			case 6:
 			//Random Memory Read+Write
 			printf("..Random read+write..\n");
 			printf("-------------------------------------\n");
@@ -140,7 +145,7 @@ int main()
 	
 			break;
 
-			case 4: exit(0);
+			case 7: exit(0);
 			break;
 			default:printf("\nPlease enter a valid option..\n");	
 		}
@@ -162,6 +167,7 @@ void *block_Byte()
 		*(mem_write+i);
 	}
 
+	free(mem_write);
 }
 
 void *block_Byte_random()
@@ -177,10 +183,12 @@ void *block_Byte_random()
 
 	for(i=0;i<BLOCK_SIZE;i++)
 	{
-		r = rand()%10;
+		r = rand()%1000000;
 		memcpy(mem_write,&mem,BLOCK_SIZE);
 		*(mem_write+r);
 	}
+
+	free(mem_write);
 }
 
 void *block_Kbyte()
@@ -194,9 +202,12 @@ void *block_Kbyte()
 	
 	for(i=0;i<BLOCK_SIZE_KB;i++)
 	{
-		memcpy(mem_write,&mem,BLOCK_SIZE_KB);
+		memcpy(mem_write,&mem,BLOCK_SIZE);
 		*(mem_write+i);
 	}
+
+	free(mem_write);
+
 }
 
 void *block_KByte_random()
@@ -211,9 +222,11 @@ void *block_KByte_random()
 	for(i=0;i<BLOCK_SIZE_KB;i++)
 	{
 		r = rand()%10;	
-		memcpy(mem_write,&mem,BLOCK_SIZE_KB);
+		memcpy(mem_write,&mem,BLOCK_SIZE);
 		*(mem_write+r);
 	}
+
+	free(mem_write);
 }
 
 void *block_Mbyte()
@@ -229,6 +242,8 @@ void *block_Mbyte()
 		memcpy(mem_write,&mem,BLOCK_SIZE);
 		*(mem_write+i);
 	}
+
+	free(mem_write);
 
 }
 
@@ -247,5 +262,7 @@ void *block_MByte_random()
 		memcpy(mem_write,&mem,BLOCK_SIZE);
 		*(mem_write+r);
 	}
+
+	free(mem_write);
 }
 
