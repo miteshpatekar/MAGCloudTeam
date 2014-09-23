@@ -317,7 +317,6 @@ void main()
     			latency= (timeDiff*1000)/(double)(nthread);
 			printf("\nLatency : %f ms",latency);
 			throughput=(KBITERATIONS*1000)/(double)(latency*KILOBYTE);
-    			//throughput=(1000*1000000)/((double)(timeDiff));
     			printf("\nThroughtput:%f MB/s",throughput);
 			
 			//Random Write KiloByte
@@ -333,7 +332,6 @@ void main()
     			latency= (timeDiff*1000)/(double)(nthread);
 			printf("\nLatency : %f ms",latency);
 			throughput=(KBITERATIONS*1000)/(double)(latency*KILOBYTE);
-    			//throughput=(1000*1000000)/((double)(timeDiff));
     			printf("\nThroughtput:%f MB/s",throughput);
 			
 			//Sequential Read KiloByte
@@ -349,7 +347,6 @@ void main()
     			latency= (timeDiff*1000)/(double)(nthread);
 			printf("\nLatency : %f ms",latency);
 			throughput=(KBITERATIONS*1000)/(double)(latency*KILOBYTE);
-    			//throughput=(1000*1000000)/((double)(timeDiff));
     			printf("\nThroughtput:%f MB/s",throughput);
 			
     			//Random Read KiloByte
@@ -365,7 +362,6 @@ void main()
     			latency= (timeDiff*1000)/(double)(nthread);
 			printf("\nLatency : %f ms",latency);
 			throughput=(KBITERATIONS*1000)/(double)(latency*KILOBYTE);
-    			//throughput=(1000*1000000)/((double)(timeDiff));
     			printf("\nThroughtput:%f MB/s",throughput);
 			break;
 		case 3: //Sequential Write MegaByte
