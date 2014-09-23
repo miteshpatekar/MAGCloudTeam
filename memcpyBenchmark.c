@@ -22,6 +22,7 @@ int main()
 	struct timezone tzp;
 	clock_t start_t, end_t, total_t=0,start_t1, end_t1,total_t1=0;
 	double latency,throughput;
+	double lat;
 	printf("\n........Program to find Memory Benchmark.......\n");
 	pthread_t th[10];// array of threads
 	int i;
@@ -56,7 +57,7 @@ int main()
 				total_t += clock() - start_t;
 			}
 			
-			double lat = (double)(total_t*1000)/(nthread*CLOCKS_PER_SEC);
+			lat = (double)(total_t*1000)/(nthread*CLOCKS_PER_SEC);
 			printf("Latency for sequential 1 Byte : %f\n", lat);
 			total_t = 0;
 		
@@ -70,16 +71,16 @@ int main()
 			printf("-------------------------------------\n");
 			for(i=0;i<nthread;i++)
 			{
-				start_t1 = clock();
+				start_t = clock();
 				pthread_create(&th[i],NULL,block_Byte_random,NULL);
 				pthread_join(th[i], NULL);
-				total_t1 += clock() - start_t1;
+				total_t += clock() - start_t;
 			}
 		
-			double lat1 = (double)(total_t1*1000)/(nthread*CLOCKS_PER_SEC);
-			printf("Latency for random 1 Byte :%f\n", lat1);
+			lat = (double)(total_t*1000)/(nthread*CLOCKS_PER_SEC);
+			printf("Latency for random 1 Byte :%f\n", lat);
 		
-			throughput=(BLOCK_SIZE/(double)((lat1)*100*1000));
+			throughput=(BLOCK_SIZE/(double)((lat)*100*1000));
 			printf("THROUGHPUT for 1 byte random : %f MB/sec\n",throughput);
 			
 			break;
@@ -100,8 +101,8 @@ int main()
 				total_t += clock() - start_t;
 			}
 			
-			double lat = (double)(total_t*1000)/(nthread*CLOCKS_PER_SEC);
-			printf("Latency for sequential 1 Byte : %f\n", lat);
+			lat = (double)(total_t*1000)/(nthread*CLOCKS_PER_SEC);
+			printf("Latency for sequential 1 KiloByte : %f\n", lat);
 			total_t = 0;
 			
 			throughput=(BLOCK_SIZE_KB/(double)((lat)*100*1000));
@@ -114,17 +115,17 @@ int main()
 			
 			for(i=0;i<nthread;i++)
 			{
-				start_t1 = clock();
+				start_t = clock();
 				pthread_create(&th[i],NULL,block_KByte_random,NULL);
 				pthread_join(th[i], NULL);
-				total_t1 += clock() - start_t1;
+				total_t += clock() - start_t;
 			}
 			
-			double lat1 = (double)(total_t1*1000)/(nthread*CLOCKS_PER_SEC);
-			printf("Latency for sequential 1 Byte : %f\n", lat);
+			double lat = (double)(total_t1*1000)/(nthread*CLOCKS_PER_SEC);
+			printf("Latency for sequential 1 KiloByte : %f\n", lat);
 			total_t = 0;
 			
-			throughput=(BLOCK_SIZE_KB/(double)((lat1)*100*1000));
+			throughput=(BLOCK_SIZE_KB/(double)((lat)*100*1000));
 			printf("THROUGHPUT : %f MB/sec\n",throughput);
 	
 			break;
@@ -145,8 +146,8 @@ int main()
 				total_t += clock() - start_t;
 			}
 			
-			double lat = (double)(total_t*1000)/(nthread*CLOCKS_PER_SEC);
-			printf("Latency for sequential 1 Byte : %f\n", lat);
+			lat = (double)(total_t*1000)/(nthread*CLOCKS_PER_SEC);
+			printf("Latency for sequential 1 MegaByte : %f\n", lat);
 			total_t = 0;
 			
 			throughput=(BLOCK_SIZE_MB/(double)((lat)*100*1000));
@@ -165,11 +166,11 @@ int main()
 				total_t1 += clock() - start_t1;
 			}
 			
-			double lat1 = (double)(total_t1*1000)/(nthread*CLOCKS_PER_SEC);
-			printf("Latency for sequential 1 Byte : %f\n", lat);
+			lat = (double)(total_t*1000)/(nthread*CLOCKS_PER_SEC);
+			printf("Latency for sequential 1 MegaByte : %f\n", lat);
 			total_t = 0;
 			
-			throughput=(BLOCK_SIZE_MB/(double)((lat1)*100*1000));
+			throughput=(BLOCK_SIZE_MB/(double)((lat)*100*1000));
 			printf("THROUGHPUT : %f MB/sec\n",throughput);
 	
 			break;
